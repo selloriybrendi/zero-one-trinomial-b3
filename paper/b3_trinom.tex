@@ -1,0 +1,646 @@
+% b3_trinom.tex -- DRAFT, local file only. Not submitted, posted or shared.
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+% Uzun fayl nomlari (\texttt) qator chetidan chiqmasin: bo'shliq cho'zilsin, kerak bo'lsa sloppy
+\setlength{\emergencystretch}{3em}
+\sloppy
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Tr}{\mathrm{T}}
+\newcommand{\Cz}{C_0}
+\newcommand{\Ck}{C_k}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\TODO}[1]{\textnormal{\textbf{[TODO: #1]}}}
+\newcommand{\ZenodoDOI}{\href{https://doi.org/10.5281/zenodo.23311094}{10.5281/zenodo.23311094}}
+
+\title[The trinomials $1+ax^3+x^k$]{The trinomials $1+ax^3+x^k$ are not unfair factors\\ of $0$--$1$ polynomials}
+% Author data as used in the author's RNT submission (DAVOM-RNT-PROMPT-2026-10-10).
+\author{Otakhon U. Kenjaev}
+\address{Independent researcher, Khorezm, Uzbekistan}
+\email{kenjayevotaxon@gmail.com}
+\thanks{ORCID: 0009-0009-3566-9285.}
+\date{12 October 2026}
+
+\begin{document}
+
+\begin{abstract}
+The unfair $0$--$1$ polynomial conjecture asserts that if a polynomial with
+coefficients in $\{0,1\}$ factors as a product of two monic polynomials with
+nonnegative real coefficients, then both factors are $0$--$1$ polynomials.
+We prove that for every $k\ge 4$ with $k\not\equiv 0 \pmod 3$ and every
+$0<a<1$, the trinomial $1+ax^3+x^k$ does not divide any $0$--$1$ polynomial with a
+nonzero cofactor having nonnegative coefficients; by reciprocity the same holds
+for $1+ax^{k-3}+x^k$. The proof analyses the forced recurrence
+$q_n+aq_{n-3}+q_{n-k}=r_n\in\{0,1\}$. An exact class formula for the
+coefficients along a distinguished ``main branch'' and elementary deviation
+lemmas reduce the problem to the main branch; for $a\in(1/2,1)$ this is settled
+by hand, and for $a\in(0,1/2]$ and $k\ge 67$ by a single rigorous
+interval-arithmetic certificate that is uniform in $k$. The remaining range
+$k\le 149$ is covered by exhaustive computer certificates with exact algebraic
+treatment of isolated parameters.
+\end{abstract}
+
+\maketitle
+
+% ---------------------------------------------------------------------------
+\section{Introduction}
+
+A polynomial is a \emph{$0$--$1$ polynomial} if all its coefficients lie in
+$\{0,1\}$. The following question was raised on MathOverflow~\cite{MO339137}.
+
+\begin{conjecture}[Unfair $0$--$1$ polynomial conjecture]
+Let $P,Q\in\mathbb{R}[x]$ be monic with nonnegative coefficients. If $PQ$ is a
+$0$--$1$ polynomial, then $P$ and $Q$ are $0$--$1$ polynomials.
+\end{conjecture}
+
+Following the literature, we call a polynomial $P$ with nonnegative coefficients
+an \emph{unfair factor} if it is not a $0$--$1$ polynomial and $PQ$ is a $0$--$1$
+polynomial for some nonzero $Q$ with nonnegative coefficients. Ghidelli~\cite{Ghidelli2022}
+showed that $1+ax^2+x^5$ ($0<a<1$) is not an unfair factor. Hare~\cite{Hare2023}
+gave an algorithm that rules out all candidate factors of degree at most $15$
+with the exception of $975$ candidates (out of $7141686$ cases); the list of exceptions
+does not appear to be publicly available. Hare also observed that a
+computation up to index $100$ suffices to show that $1+ax^3+x^5$ is not an unfair
+factor; the case $(b,k)=(3,5)$ of our theorem is therefore due to Hare. Hare's
+Theorem~1.1~\cite{Hare2023} is the reciprocity principle used below.
+Dvorsky~\cite{Dvorsky2026} treats the family $1+ax^2+x^k$ for odd $k\ge 341$,
+the bounded odd range $7\le k\le 339$ being taken from a companion
+manuscript~\cite{DvorskyCompanion}; that manuscript is not public and we have not seen
+it (its metadata are as cited in~\cite{Dvorsky2026}). On the computational side, Zhang reports a verification
+of the conjecture for $\deg(PQ)\le 66$~\cite{ZhangMO} (the README of the accompanying
+repository~\cite{ZhangGitHub} states $\deg(PQ)\le 45$). For related work on an
+$\varepsilon$-version of the problem see~\cite{NguyenPhamPham2026}.
+
+Our main result concerns the next family of trinomials.
+
+\begin{theorem}\label{thm:main}
+Let $k\ge 4$ with $k\not\equiv 0\pmod 3$ and let $0<a<1$. Then
+$P(x)=1+ax^3+x^k$ does not divide any $0$--$1$ polynomial $R$ with $R=PQ$, where
+$Q\neq 0$ has nonnegative real coefficients.
+\end{theorem}
+
+\begin{corollary}\label{cor:recip}
+Under the same hypotheses, $1+ax^{k-3}+x^k$ is not an unfair factor.
+\end{corollary}
+
+\begin{proof}
+If $PQ=R$ then $P^*Q^*=R^*$, where $f^*(x)=x^{\deg f}f(1/x)$; $Q^*$ has
+nonnegative coefficients and $R^*$ is a $0$--$1$ polynomial. Since
+$P^*=1+ax^{k-3}+x^k$, the claim follows from Theorem~\ref{thm:main}. This is
+Hare's Theorem~1.1~\cite{Hare2023}.
+\end{proof}
+
+\begin{remark}
+If $k\equiv 0\pmod 3$ the statement is trivial; see Remark~\ref{rem:trivial}.
+The families $(2,k)\cong(k-2,k)$ of~\cite{Dvorsky2026} and $(3,k)\cong(k-3,k)$
+meet only for $k=5$, the case of~\cite{Ghidelli2022}. Since Hare's
+computation~\cite{Hare2023} covers all candidate factors of degree $\le 15$ apart
+from $975$ unpublished exceptions, the cases $k\le 15$ of Theorem~\ref{thm:main} may
+be partly covered there; the theorem is certainly new for $k\ge 16$.
+\end{remark}
+
+\subsection*{Strategy}
+We fix $a$ and $k$ and study all sequences $(q_n)$ compatible with the
+recurrence $q_n=r_n-aq_{n-3}-q_{n-k}$, $r_n\in\{0,1\}$, $q_n\ge 0$
+(Section~\ref{sec:setup}). They form a binary tree that branches only at indices
+where $aq_{n-3}+q_{n-k}=0$. There is a distinguished \emph{main branch} whose
+coefficients are given in closed form by an exact class formula, Lemma~\ref{lem:W}
+(Section~\ref{sec:main}). Elementary lemmas show that every branch deviating from
+the main branch dies (Section~\ref{sec:dev}), provided the main branch has a
+positivity property at its forced indices and eventually dies. This is checked by
+hand for $a\in(1/2,1)$ (Section~\ref{sec:large}) and by one interval-arithmetic
+certificate valid for all $k\ge 67$ and $a\in(0,1/2]$ (Section~\ref{sec:U}). The
+range $4\le k\le 149$ is covered by direct computer certificates
+(Section~\ref{sec:small}).
+
+\subsection*{Notation}
+For a power series $G(a)=\sum_{i\ge 0} g_ia^i$ and an integer $L$ we write
+$\Tr_L[G]=\sum_{i=0}^{L}g_ia^i$, with $\Tr_L[G]=0$ for $L<0$. Note
+$(1+a)^{-(p+1)}=\sum_{i\ge 0}(-1)^i\binom{p+i}{p}a^i$. Throughout,
+$c\in\{1,2\}$ denotes $k \bmod 3$ and residue classes are taken modulo $3$:
+$\Cz=\{n\equiv 0\}$, $\Ck=\{n\equiv k\}$, $Z=\{n\equiv -k\}$; these are the three
+distinct classes.
+
+% ---------------------------------------------------------------------------
+\section{The forced recurrence}\label{sec:setup}
+
+\begin{definition}
+Fix $a\in(0,1)$ and $k$. A \emph{path} is a sequence $r=(r_n)_{n\ge 0}\in\{0,1\}^{\mathbb{N}}$
+with $r_0=1$. It determines $q_n=q_n(r)$ by $q_n=0$ for $n<0$ and
+\begin{equation}\label{eq:rec}
+q_n+aq_{n-3}+q_{n-k}=r_n\qquad(n\ge 0),
+\end{equation}
+equivalently $(1+ax^3+x^k)\sum q_nx^n=\sum r_nx^n$ as formal power series.
+Put $S_n=aq_{n-3}+q_{n-k}$. The path \emph{dies at $N$} if $q_n\ge 0$ for
+$n<N$ and $q_N<0$.
+\end{definition}
+
+\begin{lemma}\label{lem:reduce}
+If $1+ax^3+x^k$ divides a $0$--$1$ polynomial with a nonzero cofactor with
+nonnegative coefficients, then some path never dies.
+\end{lemma}
+
+\begin{proof}
+Let $PQ=R$. Dividing $Q$ and $R$ by the largest power of $x$ dividing $Q$ we may
+assume $q_0>0$. Then $r_0=q_0>0$, so $r_0=q_0=1$. The coefficient sequences of
+$Q$ and $R$ (extended by zeros) satisfy~\eqref{eq:rec} with $q_n\ge 0$ for all $n$.
+\end{proof}
+
+Given $q_0,\dots,q_{n-1}\ge 0$, the choice $r_n=0$ keeps $q_n\ge 0$ iff $S_n=0$,
+and $r_n=1$ keeps $q_n\ge 0$ iff $S_n\le 1$. In particular the paths that are
+alive up to index $n$ branch only at indices with $S_n=0$; if $S_n>0$ then
+$r_n=1$ is forced. By Lemma~\ref{lem:reduce}, Theorem~\ref{thm:main} follows once
+we show that \emph{every path dies}.
+
+\begin{lemma}[Linear response]\label{lem:resp}
+Let $g_\Delta=[x^\Delta](1+ax^3+x^k)^{-1}$. For two paths $r,r'$,
+$q_t(r')-q_t(r)=\sum_{s\le t}(r'_s-r_s)\,g_{t-s}$. For $0\le\Delta<k$ we have
+$g_\Delta=(-a)^{\Delta/3}$ if $3\mid\Delta$ and $g_\Delta=0$ otherwise.
+\end{lemma}
+
+\begin{proof}
+The first claim is linearity of $Q=R/P$. Writing
+\begin{equation}\label{eq:pexp}
+\frac{1}{1+ax^3+x^k}=\sum_{p\ge 0}(-1)^p\frac{x^{pk}}{(1+ax^3)^{p+1}},
+\end{equation}
+only $p=0$ contributes to degrees $<k$, and $(1+ax^3)^{-1}=\sum_i(-a)^ix^{3i}$.
+\end{proof}
+
+% ---------------------------------------------------------------------------
+\section{The main branch and the class formula}\label{sec:main}
+
+From now on $k\ge 4$ and $k\not\equiv 0\pmod 3$. Let $\F=Z\cap(k,2k]$ (the
+\emph{free set}); its least element is $d_0=k+1$ if $c=1$ and $d_0=k+2$ if
+$c=2$, and its largest element is $2k$.
+
+\begin{definition}
+The \emph{main branch} is the path $r^*$ with $r^*_n=[3\mid n]$ for $n<k$,
+$r^*_k=1$, $r^*_n=0$ for $n\in\F$, $r^*_n=1$ for $n\in(k,2k]\setminus\F$, and
+$r^*_n=1$ for $n>2k$. We write $q^*_n=q_n(r^*)$ and $S^*_n$ accordingly.
+\end{definition}
+
+On each residue class the support of $r^*$ is a tail: $\{n\in\Cz:n\ge 0\}$,
+$\{n\in\Ck:n\ge k\}$ and $\{n\in Z:n\ge 2k+3\}$. Define the thresholds
+$\tau=0,k,2k+3$ for $M$ in $\Cz,\Ck,Z$ respectively.
+
+\begin{lemma}[Class formula]\label{lem:W}
+For every $N\ge 0$, with $M_p=N-pk$ and $L_p=(M_p-\tau(M_p))/3$,
+\[
+q^*_N=\sum_{p\ge 0,\;M_p\ge 0}(-1)^p\,\Tr_{L_p}\!\big[(1+a)^{-(p+1)}\big],
+\]
+where terms with $L_p<0$ vanish. The right-hand side is a polynomial in $a$.
+\end{lemma}
+
+\begin{proof}
+By~\eqref{eq:pexp}, $q^*_N=\sum_p(-1)^p\sum_{i\ge 0}\binom{p+i}{p}(-a)^i\,r^*_{M_p-3i}$.
+All indices $M_p-3i$ lie in the class of $M_p$, and $r^*_{M_p-3i}=1$ iff
+$M_p-3i\ge\tau(M_p)$, i.e.\ iff $i\le L_p$ (note $M_p\equiv\tau(M_p)$, so $L_p$ is an integer).
+\end{proof}
+
+The formula was checked against the recurrence with exact rational
+polynomial arithmetic for $4\le k\le 120$ and all $N\le 5k+12$
+($24999$ values, no discrepancy); see Section~\ref{sec:repro}.
+
+\begin{corollary}\label{cor:C0}
+For $t\in\Cz$ with $0\le t<3k$,
+$q^*_t=\Tr_{t/3}[(1+a)^{-1}]=\dfrac{1-(-a)^{t/3+1}}{1+a}>0$ for all $a\in(0,1)$.
+\end{corollary}
+
+\begin{proof}
+For $p=1$, $M_1=t-k\in Z$ and $M_1\ge 2k+3$ would need $t\ge 3k+3$; for $p=2$,
+$M_2=t-2k\in\Ck$ and $M_2\ge k$ would need $t\ge 3k$; for $p\ge 3$, $M_p<0$.
+\end{proof}
+
+\begin{lemma}\label{lem:early}
+For all $a\in(0,1)$: $q^*_n=0$ for $n<k$ with $n\notin\Cz$; $q^*_k=0$;
+and for $n\in\F$ one has $q^*_{n-3}=q^*_{n-k}=0$, hence $S^*_n=0$ and $q^*_n=0$.
+\end{lemma}
+
+\begin{proof}
+For $n<k$, \eqref{eq:rec} reads $q_n=r_n-aq_{n-3}$, so classes $\Ck$ and $Z$ stay
+zero below $k$ under $r^*$. Then $q^*_k=1-aq^*_{k-3}-q^*_0=0$ since $k-3\in\Ck$.
+For $n\in\F$, $n-3\in Z$ is either $<k$ or in $\F$ (induction), and
+$n-k\in\Ck\cap(0,k]$, where $q^*$ vanishes.
+\end{proof}
+
+% ---------------------------------------------------------------------------
+\section{Deviations from the main branch}\label{sec:dev}
+
+\begin{lemma}[Window $n\le k$]\label{lem:window}
+Let $a\in(0,1)$ and let $r$ be a path alive up to index $k$. Then
+$r_{3j}=1$ and $q_{3j}=\sum_{i=0}^{j}(-a)^i\in(0,1]$ for $3j<k$;
+$q_n=0$ for $n<k$, $n\in\Ck$; and $r_k=1$, $q_k=0$.
+\end{lemma}
+
+\begin{proof}
+For $n<k$ we have $q_n=r_n-aq_{n-3}$. If $q_{n-3}\in(0,1]$ then $r_n=0$ would give
+$q_n<0$, so $r_n=1$ and $q_n=1-aq_{n-3}\in[1-a,1)\subset(0,1]$. Starting from
+$q_0=1$ this gives the claim on $\Cz$. If some $n<k$ in $\Ck$ had $q_n>0$, the same
+propagation would give $q_{k-3}>0$ (as $k-3\in\Ck$), and then
+$q_k=r_k-aq_{k-3}-1<0$. Hence $q_{k-3}=0$ and $q_k=r_k-1\ge 0$ forces $r_k=1$, $q_k=0$.
+\end{proof}
+
+So a path alive at index $k$ agrees with $r^*$ below $k$ except possibly on
+$Z\cap[1,k)$, where $r^*$ vanishes.
+
+\begin{lemma}[$\Cz$-shadowing]\label{lem:shadow}
+Let $a\in(0,1)$, let $r$ agree with $r^*$ on $[0,d)$ for some $d\ge 1$, and let
+$T\le\min(d+k-1,\,3k-1)$. If $r$ is alive up to $T$, then for every $t\in\Cz\cap[0,T]$
+we have $r_t=1$ and $q_t(r)=q^*_t>0$.
+\end{lemma}
+
+\begin{proof}
+Induction on $t\in\Cz$. For $t<d$ there is nothing to prove. Let $d\le t\le T$.
+By induction (or Lemma~\ref{lem:window} if $t-3<d$) $q_{t-3}(r)=q^*_{t-3}>0$
+(Corollary~\ref{cor:C0}, as $t-3<3k$), so $r_t=1$. By Lemma~\ref{lem:resp},
+$q_t(r)-q^*_t=\sum_{s=d}^{t}(r_s-r^*_s)g_{t-s}$ with $0\le t-s\le T-d<k$; thus
+$g_{t-s}\ne 0$ only for $s\in\Cz$, where $r_s=1=r^*_s$ by induction.
+Positivity is Corollary~\ref{cor:C0}.
+\end{proof}
+
+\begin{proposition}[Late starts]\label{prop:late}
+Let $a\in(0,1)$. If a path $r$ alive at $k$ has $r_{n_0}=1$ for some
+$n_0\in Z\cap[1,k)$, then it dies at an index $\le k+n_0$.
+\end{proposition}
+
+\begin{proof}
+Take $n_0$ minimal. Then $r$ agrees with $r^*$ on $[0,n_0)$ (Lemma~\ref{lem:window})
+and $q_{n_0}(r)=1-aq_{n_0-3}(r)=1$, since $n_0-3\in Z$ lies below $n_0$.
+Now $k+n_0\equiv k-k\equiv 0$, so $t=k+n_0-3\in\Cz$, and
+$T=k+n_0-3\le\min(n_0+k-1,3k-1)$. If $r$ is alive up to $T$,
+Lemma~\ref{lem:shadow} gives $q_t(r)=q^*_t>0$, and then
+$q_{k+n_0}(r)=r_{k+n_0}-a\,q_t(r)-1<0$.
+\end{proof}
+
+\begin{proposition}[Free deviations]\label{prop:free}
+Let $a\in(0,1)$ and let $r$ agree with $r^*$ on $[0,d_1)$ with $d_1\in\F$ and
+$r_{d_1}=1$. Then $r$ dies at an index $\le d_1+k$.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:early}, $q_{d_1}(r)=1-aq^*_{d_1-3}-q^*_{d_1-k}=1$. The index
+$t=d_1+k-3$ lies in $\Cz$ and $t\le 3k-3$, so with $T=t\le\min(d_1+k-1,3k-1)$
+Lemma~\ref{lem:shadow} gives $q_t(r)=q^*_t>0$ if $r$ is alive up to $t$. Hence
+$q_{d_1+k}(r)=r_{d_1+k}-aq_t(r)-1<0$.
+\end{proof}
+
+\begin{corollary}[Reduction to the main branch]\label{cor:reduce}
+Let $a\in(0,1)$. Suppose the main branch dies at some $N>k$ and $S^*_n>0$ for
+every $n\in(k,N)\setminus\F$. Then every path dies.
+\end{corollary}
+
+\begin{proof}
+Let $r$ be a path alive at $k$ (otherwise we are done); by Lemma~\ref{lem:window},
+$r$ agrees with $r^*$ on $[0,k]$ outside $Z\cap[1,k)$. If $r$ differs from $r^*$ on
+$Z\cap[1,k)$, Proposition~\ref{prop:late} applies. Otherwise let $n>k$ be the first
+index with $r_n\ne r^*_n$, if any. If $n\in\F$ then $r_n=1$ and
+Proposition~\ref{prop:free} applies. If $n\notin\F$ and $n<N$, then $r_n=0$ while
+$S_n(r)=S^*_n>0$, so $q_n(r)<0$. If no such $n<N$ exists, $r$ agrees with $r^*$ below
+$N$; since $q^*_N=1-S^*_N<0$ forces $S^*_N>1$, both choices of $r_N$ give $q_N<0$.
+\end{proof}
+
+\begin{remark}\label{rem:trivial}
+If $k\equiv 0\pmod 3$, the argument of Lemma~\ref{lem:window} gives $q_{k-3}>0$
+in every path alive at $k-1$ (now $k-3\in\Cz$), so every path dies at $n=k$.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{The range \texorpdfstring{$1/2<a<1$}{1/2 < a < 1}}\label{sec:large}
+
+\begin{lemma}[Lemma A]\label{lem:A}
+Let $k\ge 7$, $k\not\equiv 0\pmod 3$ and $a\in(1/2,1)$. Then
+$q^*_{k+3}=a$ and $q^*_{k+6}=a(1-2a)<0$, and every path dies.
+\end{lemma}
+
+\begin{proof}
+By Lemmas~\ref{lem:window} and~\ref{lem:early}, $q^*_k=0$, $q^*_3=1-a$, and
+$q^*_6=1-a+a^2$ since $6<k$. Then $q^*_{k+3}=1-a\cdot 0-(1-a)=a$ and
+$q^*_{k+6}=1-a^2-(1-a+a^2)=a(1-2a)<0$. The indices $n\in(k,k+6)\setminus\F$ are
+$k+3\in\Ck$, with $S^*_{k+3}\ge q^*_3>0$, and the $\Cz$-indices among
+$k+1,\dots,k+5$, with $S^*_n\ge aq^*_{n-3}>0$ by Corollary~\ref{cor:C0}. Hence the
+main branch dies at some $N\le k+6$ and $S^*_n>0$ on $(k,N)\setminus\F$;
+Corollary~\ref{cor:reduce} concludes.
+\end{proof}
+
+\begin{remark}
+One can also see directly that every path whose first deviation from $r^*$ is at
+an index $s>k$ dies at $k+6$: the free indices below $k+6$ are $d_0$ and $d_0+3$,
+so the relevant differences $k+3-s$ and $k+6-s$ lie in $\{1,2,4,5\}$ and the
+corresponding $g_\Delta$ vanish by Lemma~\ref{lem:resp}. Thus $q_{k+6}\le a(1-2a)<0$
+whatever $r_{k+6}$ is.
+\end{remark}
+
+\begin{remark}[Formal verification]\label{rem:lean}
+Three of the hand arguments have been checked in Lean~4 (v4.34.1, with Mathlib),
+for an arbitrary path $r\in\{0,1\}^{\mathbb{N}}$ and without coprimality
+hypotheses; the theorems are stated for general $b$ and are used here with $b=3$
+(file \texttt{lean/Trinom/Trinom/Ogish.lean}): \texttt{A\_b\_star} gives the
+conclusion ``every path dies'' of Lemma~\ref{lem:A} (no path has $q_n\ge 0$ for all
+$n\le k+6$); \texttt{E1} gives the step of Lemma~\ref{lem:window} that a positive
+coefficient in $\Ck$ below $k$ forces $q_k<0$; and \texttt{dies\_of\_dvd} gives
+Remark~\ref{rem:trivial}. The file contains no \texttt{sorry}, and
+\texttt{\#print axioms} reports only \texttt{propext}, \texttt{Classical.choice} and
+\texttt{Quot.sound}. The remaining lemmas and the computer certificates are not
+formalised.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{The range \texorpdfstring{$0<a\le 1/2$, $k\ge 67$}{0 < a <= 1/2, k >= 67}: a uniform certificate}\label{sec:U}
+
+\begin{proposition}[Lemma U]\label{prop:U}
+Let $k\ge 67$, $k\not\equiv 0\pmod 3$ and $a\in(0,1/2]$. Then the main branch
+dies at some $N\le 5k+12$, and $S^*_n>0$ for every $n\in[k,N)\setminus\F$.
+\end{proposition}
+
+The proof is a rigorous computation that is independent of $k$; we first explain
+why finitely many computations suffice.
+
+\subsection{Reduction to finitely many types}
+Write $N=jk+m$ with $0\le m<k$. Then $M_p=(j-p)k+m$ lies in the class
+$(j-p)c+m\bmod 3$, and Lemma~\ref{lem:W} gives
+$L_p=(\alpha_pk+m-\beta_p)/3$, where $(\alpha_p,\beta_p)=(j-p,0)$, $(j-p-1,0)$ or
+$(j-p-2,3)$ for $M_p$ in $\Cz$, $\Ck$, $Z$ respectively. Terms with $\alpha_p<0$
+vanish. Terms with $\alpha_p=0$ (``live'' terms) have $L_p=(m-\beta_p)/3$,
+independent of $k$. Terms with $\alpha_p\ge 1$ (``small'' terms) have
+$L_p\ge(k-3)/3$.
+
+\begin{lemma}\label{lem:tail}
+Let $p\ge 0$, $L\ge p$ and $a\in(0,1/2]$. Then
+$\big|(1+a)^{-(p+1)}-\Tr_L[(1+a)^{-(p+1)}]\big|\le\binom{p+L+1}{p}a^{L+1}$, and the
+right-hand side is non-increasing in $L$.
+\end{lemma}
+
+\begin{proof}
+The series $\sum_i(-1)^i\binom{p+i}{p}a^i$ alternates, and the ratio of consecutive
+terms is $\frac{p+i+1}{i+1}a\le\frac{p+i+1}{2(i+1)}\le 1$ for $i\ge p-1$; apply the
+Leibniz bound. The same ratio computation with $i=L+1$ gives monotonicity.
+\end{proof}
+
+Consequently, for $j\le 5$ and $k\ge K$,
+\[
+\begin{gathered}
+q^*_{jk+m}(a)=\frac{\mathcal{N}^{(c)}_{j,m}(a)}{(1+a)^6}+E,\\
+|E|\le\sum_{p:\,\alpha_p\ge 1}\binom{p+\Lambda+1}{p}a^{\Lambda+1},\qquad
+\Lambda=\lfloor (K-3)/3\rfloor,
+\end{gathered}
+\]
+where $\mathcal{N}^{(c)}_{j,m}$ is an explicit polynomial: each small term
+contributes $(-1)^p(1+a)^{5-p}$ and each live term $(-1)^p\Tr_{L_p}[(1+a)^{-(p+1)}](1+a)^6$.
+It depends on $k$ only through $c=k\bmod 3$. For $m>M_0$ (we use $M_0=60$) the live
+terms are also replaced by $(1+a)^{-(p+1)}$, with error at most
+$\binom{p+\Lambda_0+1}{p}a^{\Lambda_0+1}$, $\Lambda_0=19$; the resulting type depends
+on $m$ only through $m\bmod 3$. Hence, for fixed $c$, the main branch on the
+windows $j=1,\dots,5$ is described by finitely many \emph{types}, each a rational
+function plus an explicit error bound.
+
+\subsection{The certificate}
+The script \texttt{retsenziya/uniform\_sertifikat.py} does the following for each
+$c\in\{1,2\}$ and each of the $64$ intervals $I=[i/128,(i+1)/128]$, $0\le i\le 63$.
+It walks the main branch through the positions $(j,m)$ in increasing order:
+$j=1,\dots,4$ with $m=0,\dots,M_0+3$ individually followed by the three residues of
+$m>M_0+3$ (``generic'' positions), and $j=5$ with $m=0,\dots,12$; this covers every
+$n\in[k,5k+12]$ when $k>M_0+3$. For each type it decides the sign on $I$ rigorously:
+after removing the largest power $a^v$ dividing $\mathcal{N}$, it encloses
+$\mathcal{N}(a)/a^v$ on $I$ by Arb ball arithmetic (\texttt{arb\_poly} evaluated on
+the ball $[lo,hi]$) and compares with the enclosure
+$(1+hi)^6\sum C\,hi^{\lambda-v}$ of the error term; a sign is accepted only if it is
+strict on the whole closed interval, otherwise the type is treated as ambiguous
+(possibly zero). Then:
+\begin{itemize}
+\item[(S1)] at every non-free position before the death, $q^*_{n-3}$ or $q^*_{n-k}$
+must be certified strictly positive on $I$;
+\item[(S2)] some position must be certified strictly negative on $I$ (the death).
+\end{itemize}
+Failing intervals would be bisected (up to depth $40$); none had to be.
+Since the walk is in increasing order, (S1) is checked at every non-free $n$ up to the
+first certified negative value, which bounds the actual death index from above.
+Because intervals are closed and signs are strict on them, isolated parameters
+(e.g.\ roots of some $q^*_n$) need no separate treatment.
+
+The certificate was run with $K=151$ and with $K=67$ (the condition $k>M_0+3=63$
+holds). In both runs and in both classes all $64$ intervals were certified without
+subdivision, the deaths being of the four types
+\[
+3k+12\ (2\text{ intervals}),\quad 4k+15\ (1),\quad 5k+3\ (59),\quad 5k+12\ (2).
+\]
+A run takes about $0.7$ seconds. This proves Proposition~\ref{prop:U}, the interval
+$[63/128,1/2]$ covering $a=1/2$.
+
+\begin{remark}[Sanity checks]
+Three deliberate mutations of the certificate fail as they should: checking (S1)
+also on the free set makes all $128$ intervals fail; flipping the sign of the live
+terms changes the outcome; inflating the error bound by $10^{12}$ makes $44$
+intervals fail. A comparison of the type signs with exactly computed $q^*_N$ at
+$1200$ random parameters for $k=151,152,301$ found no contradiction; this comparison
+uses the same type model and is therefore not an independent check.
+\end{remark}
+
+\begin{remark}[Limit shapes; not used in the proof]\label{rem:limit}
+Lemma~\ref{lem:W} explains the four death types. For instance, for $k\ge 13$,
+\[
+q^*_{5k+3}=\Tr_{k+1}[G_1]+(-1)^ka^{k+1},\qquad
+q^*_{5k+12}=\Tr_{k+4}[G_2]+(-1)^{k+1}a^{k+4},
+\]
+with $G_1=a-1+(1+a)^{-1}-(1+a)^{-2}+(1+a)^{-3}=a(a^3+2a^2+a-1)/(1+a)^3$ and
+$G_2=-56a^4+41a^3-16a^2+5a-1+(1+a)^{-1}-(1+a)^{-2}+(1+a)^{-3}$
+(verified by computer for $13\le k\le 300$). Numerically (coefficients compared up to
+$k=40$), the $k$-independent limits of $q^*_n$ at $n=5k+3,5k+12,4k+15,3k+12$ are
+negative for $a<\alpha$, $a>\beta$, $a>0.47098\ldots$ and $a>0.47681\ldots$
+respectively, where $\alpha=0.4655712318\ldots$ and $\beta=0.4484743767\ldots$
+are the roots in $(0,1)$ of $1-a-2a^2-a^3$ and of the numerator of $G_2$. Since
+$(0,\alpha)\cup(\beta,1/2]=(0,1/2]$, the main branch always dies; the certificate
+makes this rigorous uniformly in $k$.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{Small \texorpdfstring{$k$}{k} and isolated parameters}\label{sec:small}
+
+\begin{proposition}\label{prop:small}
+For $4\le k\le 149$, $k\not\equiv 0\pmod 3$, and every $a\in(0,1)$, every path dies.
+\end{proposition}
+
+This is established by an exhaustive computer certificate over the whole parameter
+interval $(0,1)$ (script \texttt{simvolik\_isbot\_flint.py} with
+\texttt{GCD\_TEKSHIR=1}). The program performs a depth-first search over paths in
+which each node carries a subinterval $I\subset(0,1)$ and the exact polynomials
+$q_0,\dots,q_{n-1}\in\mathbb{Q}[a]$ valid on $I$ (FLINT \texttt{fmpq\_poly}).
+At index $n$:
+\begin{itemize}
+\item the branch $r_n=0$ is opened when $q_{n-3}$ and $q_{n-k}$ are both the zero
+polynomial;
+\item for $r_n=1$, $I$ is split according to the sign of $q_n=1-aq_{n-3}-q_{n-k}$.
+Real roots are counted exactly with Sturm sequences (PARI \texttt{polsturm});
+approximate roots from \texttt{polrootsreal} are enclosed in rational boxes of
+width about $2^{-40}$ whose root counts are confirmed by \texttt{polsturm}, with
+exact bisection as a fallback. An Arb ball evaluation that excludes $0$ on $I$
+certifies a constant sign without Sturm. Subintervals where $q_n<0$ die; the others,
+including the narrow boxes containing roots, are continued (conservatively);
+\item parameters where $r_n=0$ is possible without $q_{n-3},q_{n-k}$ vanishing
+identically are isolated algebraic numbers: common roots of $q_{n-3}$ and $q_{n-k}$
+(gcd, factored by PARI \texttt{factor}) and roots of $q_n$ falling exactly on a
+subinterval endpoint are collected.
+\end{itemize}
+At each collected algebraic parameter $\alpha$ the complete tree, including all
+$r_n=0$ branches, is rerun in exact arithmetic in $\mathbb{Q}(\alpha)$
+(\texttt{nuqtaviy.py}); signs are decided by refining an isolating interval of the
+minimal polynomial with Sturm sequences. A run is accepted if no branch reaches the
+depth bound $N$, no terminating cofactor is detected, and all isolated parameters die.
+
+For $k\le 60$ the runs (depth bound $N=2000$) are recorded in
+\texttt{retsenziya/toliq\_census.log}; all $38$ runs are accepted, $36$ isolated
+parameters were collected in total and all die, and for $k\ge 13$ the maximal depth
+reached is exactly $5k+12$. For $61\le k\le 149$ ($60$ values,
+$N=4000$; \texttt{retsenziya/b3\_61\_150.log}) all $60$ runs are accepted, the maximal
+depth is exactly $5k+12$ in each run, $60$ isolated parameters were collected in total
+(for instance $a=1/2$) and all of them die; each run takes at most about $7$ seconds.
+The range $67\le k\le 149$ is thus covered twice (here and by
+Proposition~\ref{prop:U}).
+
+\subsection*{Exact check at root points for \texorpdfstring{$151\le k\le 250$}{151 <= k <= 250}}
+As an independent confirmation of the treatment of isolated parameters in
+Proposition~\ref{prop:U}, for each $k\in[151,250]$, $k\not\equiv 0$ ($67$ values), the
+script \texttt{retsenziya/ildiz\_nuqta.py} computes all main-branch polynomials
+$q^*_n$, $n\le 5k+12$, collects all their roots in $(0,1/2]$, and runs the complete
+exact tree in $\mathbb{Q}(\alpha)$ at each root (depth bound $5k+60$). In every case
+there are exactly six such roots, the same for all $k$:
+\[
+\begin{gathered}
+0.4484743767\ldots,\quad 0.4655712319\ldots,\quad 0.4709761380\ldots,\\
+0.4768143659\ldots,\quad 0.4874322956\ldots,\quad 1/2
+\end{gathered}
+\]
+(the last being the root of $q^*_{k+6}=a(1-2a)$). All $402$ point trees die, none
+survives, and the maximal depth is exactly $5k+12$ for every $k$; in total
+$1895851$ branchings were explored (about $19971$ s of running time summed over the
+runs). With the depth bound lowered to $5k+10$, two points are correctly reported
+alive. An independent re-implementation produced the same outcome for
+$k=151,152,154,155,301,302$.
+
+% ---------------------------------------------------------------------------
+\section{Proof of Theorem~\ref{thm:main}}
+
+Let $k\ge 4$, $k\not\equiv 0\pmod 3$, $a\in(0,1)$. By Lemma~\ref{lem:reduce} it
+suffices to show that every path dies. If $k\le 149$ this is
+Proposition~\ref{prop:small}. If $k\ge 67$ and $a\in(1/2,1)$, it
+is Lemma~\ref{lem:A}. If $k\ge 67$ and $a\in(0,1/2]$, Proposition~\ref{prop:U} gives
+the hypotheses of Corollary~\ref{cor:reduce} (note $n=k\notin\F$ and
+$S^*_k=aq^*_{k-3}+q^*_0=1>0$), which concludes. \qed
+
+The proof depends on the correctness of python-flint~\cite{pythonflint}
+(FLINT~\cite{FLINT} and its ball-arithmetic component Arb~\cite{Arb}:
+\texttt{fmpq\_poly}, \texttt{arb}, \texttt{arb\_poly}) and of
+PARI/GP~\cite{PARI} (\texttt{polsturm}, \texttt{polrootsreal}, \texttt{factor}),
+both standard libraries.
+
+% ---------------------------------------------------------------------------
+\section{Computer verification and reproducibility}\label{sec:repro}
+
+\begingroup\raggedright
+All scripts are in the project directory (paths relative to it) and were run with a
+Python environment providing python-flint~0.9.0 and cypari2~2.2.4 (PARI~2.17.2),
+denoted \texttt{python} below.
+\begin{enumerate}
+\item \emph{Class formula} (Lemma~\ref{lem:W}):
+\texttt{python retsenziya/oyna\_formula.py 4 120} compares the formula with the
+recurrence for all $N\le 5k+12$; output: $24999$ values, $0$ discrepancies.
+\item \emph{Uniform certificate} (Proposition~\ref{prop:U}):
+\texttt{python retsenziya/uniform\_sertifikat.py 151 60} and
+\texttt{python retsenziya/uniform\_sertifikat.py 67 60}; output per class:
+$64$ intervals checked, $0$ failed, death types
+$\{(3,12)\!:\!2,\ (4,15)\!:\!1,\ (5,3)\!:\!59,\ (5,12)\!:\!2\}$, where $(j,m)$ stands for
+$n=jk+m$.
+\item \emph{Small $k$} (Proposition~\ref{prop:small}):
+\texttt{GCD\_TEKSHIR=1 python simvolik\_isbot\_flint.py 3 $k$ 2000} for $k\le 60$
+(driver \texttt{retsenziya/toliq\_census.sh}, log \texttt{retsenziya/toliq\_census.log}) and
+\texttt{GCD\_TEKSHIR=1 python simvolik\_isbot\_flint.py 3 $k$ 4000} for $61\le k\le 149$
+(driver \texttt{retsenziya/b3\_61\_150.sh}, log \texttt{retsenziya/b3\_61\_150.log}). Each run
+prints a JSON record; acceptance is the field \texttt{isbot\_toliq}.
+\item \emph{Root points}: \texttt{python retsenziya/ildiz\_nuqta.py $k$} for
+$151\le k\le 250$ (driver \texttt{retsenziya/ildiz\_nuqta.sh}, log
+\texttt{retsenziya/ildiz\_nuqta.log}).
+\item \emph{Formal verification} (Remark~\ref{rem:lean}): \texttt{lake build} in
+\texttt{lean/Trinom} (toolchain \texttt{leanprover/lean4:v4.34.1}, Mathlib
+\texttt{v4.34.1}); the build completes without errors and the files
+\texttt{Trinom/Basic.lean} and \texttt{Trinom/Ogish.lean} contain no \texttt{sorry}.
+\end{enumerate}
+
+\subsection*{Availability}
+The scripts listed above (\texttt{simvolik\_isbot\_flint.py}, \texttt{nuqtaviy.py} and
+the files under \texttt{retsenziya/}), the complete logs of all runs reported in
+Sections~\ref{sec:U} and~\ref{sec:small}, and the Lean sources are
+available together with this paper. Each certificate run recomputes its verdict and
+reads no stored data (the scripts only write their output), so the logs serve only
+for comparison. Timings quoted in the text are wall-clock times of single
+runs and are given for orientation only.
+All of this material is deposited at Zenodo, doi:\,\ZenodoDOI,
+and mirrored at \url{https://github.com/selloriybrendi/zero-one-trinomial-b3}.
+All runs were made on an Apple M5 (10 cores, 16\,GB RAM) under macOS, with
+python-flint~0.9.0 and PARI/GP~2.17.2.
+\par\endgroup
+
+% ---------------------------------------------------------------------------
+\section*{Use of AI tools}
+The AI assistant Claude (Anthropic) was used in the preparation of this work: to
+write and run the computational scripts, including the certificate programs of
+Sections~\ref{sec:U} and~\ref{sec:small}, to draft the Lean formalisation of
+Remark~\ref{rem:lean}, to search and check the literature, and to draft the text of
+this paper. The mathematical claims do not rest on the output of the AI tool: the
+computer-assisted parts are checked by the exact and interval arithmetic of
+FLINT/Arb~\cite{FLINT,Arb} and PARI/GP~\cite{PARI}, and the formalised parts by the
+Lean proof checker. The author has checked all arguments, computations and
+references in this paper and takes full responsibility for its content.
+
+% ---------------------------------------------------------------------------
+\section{Outlook}
+
+For general odd $b$ the class formula extends: if $\gcd(b,k)=1$ and the main branch
+is defined by $r_n=1$ unless $q_{n-b}$ and $q_{n-k}$ both vanish identically, the
+thresholds are $\tau_0=0$, $\tau_1=k$, $\tau_j=jk+b$ ($j\ge 2$) on the class
+$n\equiv jk\pmod b$, and $q_N=\sum_{p:\,L_p\ge 0}(-1)^p\Tr_{L_p}[(1+a)^{-(p+1)}]$ with
+$L_p=(M_p-\tau_{j(M_p)})/b$. This was checked by computer (no discrepancy) for
+$b=3$ ($4\le k\le 60$), $b=5$ ($6\le k\le 40$) and $b=7$ ($8\le k\le 36$), but we do
+not state it here as a proved lemma for $b\ge 5$. The following is known only
+partially and is \emph{not} proved here.
+
+\begin{itemize}
+\item \emph{Finite ranges.} Exhaustive certificates of the type of
+Section~\ref{sec:small} cover $b=5$, $6\le k\le 39$, and $b=7$, $8\le k\le 30$
+($k\not\equiv 0\pmod b$).
+\item \emph{Main branch, uniformly in $k$.} The analogue of the certificate of
+Section~\ref{sec:U} shows that the main branch dies by index $7k+5$ for $b=5$, all
+$k\ge 201$, and by $9k+7$ for $b=7$, all $k\ge 1001$; the dominant death types are
+$(b+2)k+b$ for $b=3,5,7$. For $a\in(1/2,1)$ and $k>2b$ the main branch has
+$q_{k+b}=a$ and $q_{k+2b}=a(1-2a)<0$.
+\item \emph{Deviations.} The free-deviation lemma (Proposition~\ref{prop:free}) fails
+for $b\ge 5$: for $b=5$, $k=31$, a deviation at $n=2k$ survives up to $13k+30$ at an
+isolated $a\approx 0.2469$. A uniform treatment of deviating branches is missing.
+\item \emph{Stability of deviation patterns.} For $b=5$, describing the leaves of
+the full tree in window coordinates (offsets $\le 30$ from window ends kept exactly,
+middle offsets only modulo $b$), the sets of leaf patterns for $k=66$ and $k=71$
+contain $53151$ and $54617$ patterns, with $53147$ in common; only $4$ patterns occur
+for $k=66$ alone. The trees have $66706$ and $85329$ leaves, no live branch, and at
+most four deviations per path.
+\end{itemize}
+
+\begin{conjecture}
+For $b=5$ (and plausibly every odd $b$), the deviation tree stabilises in window
+coordinates for large $k$, so that a finite catalogue of patterns, each with a uniform
+interval certificate, would prove the analogue of Theorem~\ref{thm:main}.
+\end{conjecture}
+
+\raggedright
+\bibliographystyle{amsplain}
+\bibliography{b3_trinom}
+
+\end{document}
